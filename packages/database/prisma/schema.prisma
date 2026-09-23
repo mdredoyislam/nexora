@@ -1,0 +1,107 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String          @id @default(uuid())
+  email          String?         @unique
+  passwordHash   String?
+  is2faEnabled   Boolean         @default(false)
+  role           String          @default("USER") // USER | ADMIN
+  createdAt      DateTime        @default(now())
+  wallets        Wallet[]
+  sessions       Session[]
+  securityEvents SecurityEvent[]
+  notifications  Notification[]
+}
+
+model Wallet {
+  id            String              @id @default(uuid())
+  userId        String
+  user          User                @relation(fields: [userId], references: [id])
+  address       String              @unique
+  nameAlias     String?
+  isPrimary     Boolean             @default(false)
+  lastConnected DateTime            @default(now())
+  transactions  Transaction[]
+  portfolio     PortfolioSnapshot[]
+}
+
+model Session {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+model SecurityEvent {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  type      String
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  type      String
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model Network {
+  chainId        Int           @id
+  name           String
+  rpcUrl         String
+  explorerUrl    String
+  nativeCurrency String
+  isActive       Boolean       @default(true)
+  transactions   Transaction[]
+  tokens         Token[]
+}
+
+model Token {
+  id              String  @id @default(uuid())
+  chainId         Int
+  network         Network @relation(fields: [chainId], references: [chainId])
+  contractAddress String
+  symbol          String
+  decimals        Int
+  logoUrl         String?
+
+  @@unique([chainId, contractAddress])
+}
+
+model Transaction {
+  hash        String   @id
+  walletId    String
+  wallet      Wallet   @relation(fields: [walletId], references: [id])
+  chainId     Int
+  network     Network  @relation(fields: [chainId], references: [chainId])
+  type        String   // SEND, RECEIVE, SWAP, APPROVE
+  status      String   // PENDING, CONFIRMED, FAILED
+  amount      Decimal
+  fromAddress String
+  toAddress   String
+  createdAt   DateTime @default(now())
+}
+
+model PortfolioSnapshot {
+  id        String   @id @default(uuid())
+  walletId  String
+  wallet    Wallet   @relation(fields: [walletId], references: [id])
+  totalUsd  Decimal
+  timestamp DateTime @default(now())
+}

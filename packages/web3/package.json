@@ -1,0 +1,9 @@
+{
+  "name": "@nexora/web3",
+  "version": "1.0.0",
+  "main": "index.ts",
+  "dependencies": {
+    "wagmi": "^2.10.0",
+    "viem": "^2.17.0"
+  }
+}
