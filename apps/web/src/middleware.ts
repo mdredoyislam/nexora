@@ -3,16 +3,17 @@ import type { NextRequest } from 'next/server'
  
 export function middleware(request: NextRequest) {
   const isAuthenticated = request.cookies.has('nexora_auth')
+  const pathname = request.nextUrl.pathname
   
-  if (!isAuthenticated && request.nextUrl.pathname.startsWith('/dashboard')) {
+  if (!isAuthenticated && pathname.startsWith('/dashboard')) {
     return NextResponse.redirect(new URL('/auth/login', request.url))
   }
   
-  if (isAuthenticated && request.nextUrl.pathname.startsWith('/auth')) {
+  if (isAuthenticated && (pathname.startsWith('/auth') || pathname === '/')) {
     return NextResponse.redirect(new URL('/dashboard', request.url))
   }
 }
  
 export const config = {
-  matcher: ['/dashboard/:path*', '/auth/:path*'],
+  matcher: ['/', '/dashboard/:path*', '/auth/:path*'],
 }
