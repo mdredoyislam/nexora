@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Search, User, MoreVertical, Send } from "lucide-react";
+import { Search, User, MoreVertical, Send, MessageSquare } from "lucide-react";
 
 // Mock data
 const INITIAL_CONTACTS = [
