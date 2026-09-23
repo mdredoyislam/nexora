@@ -127,7 +127,13 @@ export function Header() {
                 </Link>
               </div>
               <div className="py-1 border-t border-white/10">
-                <button className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-red-400/10 transition-colors">
+                <button 
+                  onClick={() => {
+                    document.cookie = "nexora_auth=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                    window.location.href = "/auth/login";
+                  }}
+                  className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-red-400/10 transition-colors"
+                >
                   <LogOut className="h-4 w-4" />
                   Sign out
                 </button>
