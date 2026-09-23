@@ -2,12 +2,24 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Eye, EyeOff, ChevronRight } from "lucide-react";
 
 export default function LoginPage() {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
+  // Pre-fill demo user credentials for testing
+  const [email, setEmail] = useState("admin@nexora.com");
+  const [password, setPassword] = useState("admin123");
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Dummy authentication: Set a cookie and redirect to dashboard
+    document.cookie = "nexora_auth=1; path=/; max-age=86400"; // Expires in 1 day
+    router.push("/dashboard");
+  };
 
   return (
     <div className="w-full">
@@ -19,12 +31,19 @@ export default function LoginPage() {
         </Link>
       </p>
 
-      <form className="space-y-5" onSubmit={(e) => e.preventDefault()}>
+      <form className="space-y-5" onSubmit={handleLogin}>
         <div className="space-y-1.5">
           <label className="text-sm font-medium text-gray-300">
             Email <span className="text-primary">*</span>
           </label>
-          <Input type="email" placeholder="john@example.com" className="bg-[#1a1b26] border-white/10 text-white placeholder:text-gray-600 focus:border-primary/50" />
+          <Input 
+            type="email" 
+            placeholder="john@example.com" 
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="bg-[#1a1b26] border-white/10 text-white placeholder:text-gray-600 focus:border-primary/50" 
+            required
+          />
         </div>
 
         <div className="space-y-1.5 relative">
@@ -35,7 +54,10 @@ export default function LoginPage() {
             <Input 
               type={showPassword ? "text" : "password"} 
               placeholder="••••••••" 
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               className="bg-[#1a1b26] border-white/10 text-white placeholder:text-gray-600 focus:border-primary/50 pr-10" 
+              required
             />
             <button 
               type="button"
