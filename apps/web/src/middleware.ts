@@ -9,11 +9,11 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/auth/login', request.url))
   }
   
-  if (isAuthenticated && (pathname.startsWith('/auth') || pathname === '/')) {
+  if (isAuthenticated && pathname.startsWith('/auth')) {
     return NextResponse.redirect(new URL('/dashboard', request.url))
   }
 }
  
 export const config = {
-  matcher: ['/', '/dashboard/:path*', '/auth/:path*'],
+  matcher: ['/dashboard/:path*', '/auth/:path*'],
 }
